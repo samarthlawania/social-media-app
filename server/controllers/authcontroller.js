@@ -2,6 +2,8 @@ import Users from "../models/user.js";
 import { hashString, comparePassword, jsonwebtoken } from "../utils/index.js";
 import { sendVerificationmail } from "../utils/sendEmail.js";
 
+//password-012345
+
 export const register = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
 

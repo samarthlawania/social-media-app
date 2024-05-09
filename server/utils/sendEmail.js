@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import VerificationToken from "../models/emailverification.js";
+import PasswordReset from "../models/passwordreset.js";
 
 dotenv.config();
 
@@ -56,4 +57,41 @@ export const sendVerificationmail = async (user, res) => {
   // Hash the token
 
   console.log("first");
+};
+
+export const sendmailresetpassword = async (user, res) => {
+  const { _id, email } = user;
+  console.log(email);
+  const code = Math.floor(100000 + Math.random() * 900000);
+  const token = _id + uuid();
+  const templatePath = path.join(
+    __dirname,
+    "../mails",
+    "resetpassword-mail.ejs"
+  );
+  const hashedToken = await hashString(token);
+  const new_request = await PasswordReset.create({
+    userId: _id,
+    token: hashedToken, // Use the hashed token
+    createdAt: Date.now(),
+    email: email,
+    expiresAt: Date.now() + 180000,
+    activationcode: code,
+  });
+  const data = { user, token, code };
+  const html = await ejs.renderFile(templatePath, data);
+  const mailOptions = {
+    from: AUTH_EMAIL,
+    to: email,
+    subject: "Reset Password",
+    html: html,
+  };
+  //console.log("mail k andr hun");
+  await transporter
+    .sendMail(mailOptions)
+    .then(() => {
+      console.log("mail k andr hun");
+    })
+    .catch((err) => console.log(err));
+  console.log("hn khtm");
 };

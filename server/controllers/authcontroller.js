@@ -1,10 +1,12 @@
 import Users from "../models/user.js";
 import { hashString, comparePassword, jsonwebtoken } from "../utils/index.js";
 import { sendVerificationmail } from "../utils/sendEmail.js";
+import VerificationToken from "../models/emailverification.js";
 
 //password-012345
 
 export const register = async (req, res, next) => {
+  console.log("hn bhai register krne hi aaya hun idhar");
   const { firstname, lastname, email, password } = req.body;
 
   //validate if all fields are filled
@@ -30,10 +32,22 @@ export const register = async (req, res, next) => {
       password: hashedPassword,
     });
 
-    sendVerificationmail(user, res);
+    // const user_token = await VerificationToken.findOne({ userId: user._id });
+
+    // console.log(user_token + "" + user._id);
+
+    const {token} = await sendVerificationmail(user, res);
+
+    const user_token = await VerificationToken.findOne({ userId: user._id });
+
+    console.log(user_token + "" + user._id);
 
     await user.save();
-    res.status(201).json({ message: "User created successfully" });
+    res.status(201).json({
+      message: "User created successfully",
+      userId: user._id,
+      token,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ essage: err.message });

@@ -35,6 +35,7 @@ export const sendVerificationmail = async (user, res) => {
     "registration-mail.ejs"
   );
   const hashedToken = await hashString(token);
+  console.log("bina hash kiya hua token hai yhe" + token);
   const newVerifiedEmail = await VerificationToken.create({
     userId: _id,
     token: hashedToken, // Use the hashed token
@@ -55,6 +56,7 @@ export const sendVerificationmail = async (user, res) => {
   await transporter.sendMail(mailOptions);
 
   // Hash the token
+  return { _id, token };
 
   console.log("first");
 };

@@ -4,11 +4,19 @@ import {
   verifyemail,
   requestpasswordreset,
   passwordreset,
-  changepassword
+  changepassword,
+  getuser,
+  updateuser,
 } from "../controllers/usercontroller.js";
+import userauth from "../middleware/authmiddleware.js";
 
 const router = express.Router();
 const __dirname = path.resolve(path.dirname(""));
+
+//user-route
+
+router.post("/get-user/:id", userauth, getuser);
+router.put("update-user/", userauth, updateuser);
 
 router.post("/verify/:userId/:token", verifyemail);
 

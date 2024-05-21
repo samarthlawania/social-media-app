@@ -12,7 +12,6 @@ const errormiddleware = (err,req,res,next)=>{ const defaulterror = {
     defaulterror.status = 400;
     defaulterror.message = `Duplicate ${Object.keys(err.keyValue)} entered`;
   }
-
   res.status(defaulterror.status).json({
     success:defaulterror.success,
     message:defaulterror.message

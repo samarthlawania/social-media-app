@@ -8,11 +8,12 @@ export const verifyemail = async (req, res) => {
   const { code } = req.body;
   console.log(req.body);
   const { userId, token } = req.params;
-  //console.log(token);
+  console.log(userId);
   // console.log(result);
 
   try {
     const result = await VerificationToken.findOne({ userId });
+    console.log("result" + result);
     if (result) {
       const { expiresAt, token: hashedToken, activationcode } = result;
       //console.log(expiresAt, token);
@@ -30,13 +31,14 @@ export const verifyemail = async (req, res) => {
               });
           })
           .catch((error) => {
-            console.log(error);
+            console.log(error + "erf");
             res.redirect(`/users/verified?message=`);
           });
       } else {
         //token valid
+        console.log(activationcode + "df" + code);
         if (activationcode == code) {
-          // console.log(token + "hashedToken/n" + hashedToken);
+          console.log(token + "\n" + "hashedToken\n" + hashedToken);
           comparePassword(token, hashedToken)
             .then((isMatch) => {
               if (isMatch) {
@@ -46,9 +48,7 @@ export const verifyemail = async (req, res) => {
                     VerificationToken.findOneAndDelete({ userId }).then(() => {
                       const message = "Email verified successfully";
                       console.log(message);
-                      res.redirect(
-                        `/user/verified?status=success&message=${message}`
-                      );
+                     res.status(200).json({ success: true, message });
                     });
                   })
                   .catch((err) => {
@@ -194,5 +194,58 @@ export const changepassword = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(404).json({ message: error.message });
+  }
+};
+
+export const getuser = async (req, res, next) => {
+  try {
+    const { userId } = req.body.user;
+    const { id } = req.params;
+    const user = await Users.findById(id ?? userId).populate({
+      path: "friends",
+      password: "-password",
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
+    }
+    user.password = undefined;
+    res.status(200).json({ user, success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const updateuser = async (req, res) => {
+  try {
+    const { firstname, lastname, location, profile, profession } = req.body;
+    if (!(firstname || lastname || location || profile || profession)) {
+      res.status.json({ message: "All fields are required" });
+    }
+    const { userId } = req.body.user;
+    const updateUser = {
+      firstname,
+      lastname,
+      location,
+      profile,
+      profession,
+    };
+
+    const user = await Users.findByIdAndUpdate(userId, updateUser, {
+      new: true,
+    });
+
+    await user.populate({ path: "friends", select: "-password" });
+
+    const token = generateToken(user._id);
+    user.password = undefined;
+    res
+      .status(200)
+      .json({ user, message: "User updated succesully", token, success: true });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };

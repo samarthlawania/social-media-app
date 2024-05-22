@@ -2,19 +2,42 @@ import React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userlogin } from "../redux/userslice";
+import axios from "axios";
 
 function Login() {
   const {
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm();
   const [errMsg, setErrMsg] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   let navigate = useNavigate();
+  let dispatch = useDispatch();
 
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/auth/login",
+        data
+      );
+      console.log("response" + JSON.stringify(response));
+      if (response.data.success) {
+        console.log("kr na navigate profile pr");
+        dispatch(
+          userlogin({
+            ...response.data.user,
+            token: response.data.token,
+          })
+        );
+        navigate("/profile");
+      }
+    } catch (error) {
+      console.log("login wala error hai" + error);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -25,11 +48,6 @@ function Login() {
     setShowPassword((prevState) => !prevState);
   };
 
-  function handleSubmit() {
-    //let navigate = useNavigate();
-    navigate("/profile");
-  }
-
   return (
     <>
       <div className="dark:bg-gradient-to-l from-gray-900 to-gray-600 flex justify-center items-center w-screen h-screen p-5">
@@ -37,7 +55,7 @@ function Login() {
           <h1 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-200">
             User Login
           </h1>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               {/* //username and password */}
               <label

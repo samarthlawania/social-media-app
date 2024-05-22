@@ -36,7 +36,7 @@ export const register = async (req, res, next) => {
 
     // console.log(user_token + "" + user._id);
 
-    const {token} = await sendVerificationmail(user, res);
+    const { token } = await sendVerificationmail(user, res);
 
     const user_token = await VerificationToken.findOne({ userId: user._id });
 
@@ -73,8 +73,10 @@ export const login = async (req, res, next) => {
       next("Please verify");
       return;
     }
-
-    const isMatch = comparePassword(password, user?.password);
+    console.log(password);
+    console.log(user?.password);
+    const isMatch = await comparePassword(password, user?.password);
+    console.log(isMatch);
     if (!isMatch) {
       console.log("glt kr diya");
       next("Invalid email or password");

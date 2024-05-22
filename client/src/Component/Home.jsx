@@ -1,6 +1,12 @@
 import React from "react";
+import Topbar from "../Compo/Topbar";
 function Home() {
-  return <div>Home</div>;
+  return (
+    <>
+      <Topbar />
+      <h2>Home</h2>
+    </>
+  );
 }
 
 export default Home;

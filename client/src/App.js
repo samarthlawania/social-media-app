@@ -24,11 +24,11 @@ function Layout() {
 }
 
 function App() {
-  const theme = useSelector((state) => state.theme);
-  console.log(theme);
+  const theme = useSelector((state) => state.theme.theme);
+  console.log("hn bhai phli phli baar" + JSON.stringify(theme));
 
   return (
-    <div className="data-theme={theme} w-full min-h-[100vh] ">
+    <div data-theme={theme} className=" w-full min-h-[100vh] ">
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />

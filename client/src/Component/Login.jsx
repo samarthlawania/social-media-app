@@ -33,7 +33,7 @@ function Login() {
             token: response.data.token,
           })
         );
-        navigate("/profile");
+        navigate("/");
       }
     } catch (error) {
       console.log("login wala error hai" + error);
@@ -51,7 +51,7 @@ function Login() {
   return (
     <>
       <div className="dark:bg-gradient-to-l from-gray-900 to-gray-600 flex justify-center items-center w-screen h-screen p-5">
-        <div className="bg-white shadow-md dark:shadow-gray-600 rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-full md:w-1/3 dark:bg-gray-800">
+        <div className="bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-600 rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-full md:w-1/3">
           <h1 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-200">
             User Login
           </h1>
@@ -125,13 +125,13 @@ function Login() {
             <div className="flex justify-between mb-6">
               <Link
                 to="/reset-password"
-                className="text-sm font-semibold text-lime-200 hover:text-blue-700"
+                className="text-sm font-semibold text-lime-400 hover:text-blue-600 dark:text-lime-100"
               >
                 Forget password?
               </Link>
               <Link
                 to="/register"
-                className="text-sm font-semibold text-lime-200 hover:text-blue-700"
+                className="text-sm font-semibold text-lime-400 hover:text-blue-700 dark:text-lime-100"
               >
                 Create account
               </Link>

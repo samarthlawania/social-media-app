@@ -57,8 +57,6 @@ export const sendVerificationmail = async (user, res) => {
 
   // Hash the token
   return { _id, token };
-
-  console.log("first");
 };
 
 export const sendmailresetpassword = async (user, res) => {
@@ -77,10 +75,9 @@ export const sendmailresetpassword = async (user, res) => {
     token: hashedToken, // Use the hashed token
     createdAt: Date.now(),
     email: email,
-    expiresAt: Date.now() + 180000,
-    activationcode: code,
+    expiresAt: Date.now() + 1800000,
   });
-  const data = { user, token, code };
+  const data = { user, token };
   const html = await ejs.renderFile(templatePath, data);
   const mailOptions = {
     from: AUTH_EMAIL,
@@ -96,4 +93,6 @@ export const sendmailresetpassword = async (user, res) => {
     })
     .catch((err) => console.log(err));
   console.log("hn khtm");
+
+  return { _id, token };
 };

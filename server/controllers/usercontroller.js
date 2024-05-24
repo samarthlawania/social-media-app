@@ -48,7 +48,7 @@ export const verifyemail = async (req, res) => {
                     VerificationToken.findOneAndDelete({ userId }).then(() => {
                       const message = "Email verified successfully";
                       console.log(message);
-                     res.status(200).json({ success: true, message });
+                      res.status(200).json({ success: true, message });
                     });
                   })
                   .catch((err) => {
@@ -113,12 +113,18 @@ export const requestpasswordreset = async (req, res) => {
       await PasswordReset.findOneAndDelete({ email });
     }
     console.log("mail ja rha hai");
-    await sendmailresetpassword(user, res);
+    const { token } = await sendmailresetpassword(user, res);
     console.log("mail chla gya");
+
+    // token = await PasswordReset.findOne({ email });
+
+    // console.log(token);
 
     res.status(200).json({
       status: "Success",
       message: "Password reset request has been sent. Please check your email.",
+      userId: user._id,
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -128,6 +134,7 @@ export const requestpasswordreset = async (req, res) => {
 
 export const passwordreset = async (req, res) => {
   const { userId, token } = req.params;
+  console.log("reset k andr se uhun" + userId);
   try {
     const user = await Users.findById(userId);
     if (!user) {
@@ -149,6 +156,7 @@ export const passwordreset = async (req, res) => {
     const { token: resettoken, expiresAt } = existingrequest;
 
     if (expiresAt < Date.now()) {
+      await PasswordReset.findOneAndDelete({ userId });
       const message =
         "Password reset link has expired. Please request a new one.";
       console.log(message);
@@ -174,16 +182,22 @@ export const passwordreset = async (req, res) => {
 };
 
 export const changepassword = async (req, res, next) => {
+  console.log("changepassword");
   try {
-    const { userId, password, confirmpassword } = req.body;
+    const { password, confirmpassword } = req.body;
+    const {userId} = req.params;
+    console.log(password, confirmpassword);
     if (password !== confirmpassword) {
       const message = "Passwords do not match";
       console.log(message);
-      res.redirect(`/user/reset-password?status=error&message=${message}`);
+      res.redirect(`/user/change-password?status=error&message=${message}`);
       return;
     }
     const hashedpassword = await hashString(password);
-    const user = await Users.findById(userId);
+    const user = await Users.findByIdAndUpdate(
+      { _id: userId },
+      { password: hashedpassword }
+    );
     console.log(user);
     if (user) {
       await PasswordReset.findOneAndDelete({ userId });
@@ -192,7 +206,7 @@ export const changepassword = async (req, res, next) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.log("oiujhgffgvhb" + error);
     res.status(404).json({ message: error.message });
   }
 };

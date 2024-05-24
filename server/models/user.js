@@ -23,9 +23,9 @@ const userSchema = new mongoose.Schema({
     location:{type:String},
     profileURL:{type:String},
     profession:{type:String},
-    friends:{type:Schema.Types.ObjectId,ref:"Users"},
+    friends:[{type:Schema.Types.ObjectId,ref:"Users"}],
     friendrequests:{type:Number,default:0},
-    views:{type:String},
+    views:[{type:String}],
     verified:{type:Boolean,default:false}
 },{timestamps:true})
 

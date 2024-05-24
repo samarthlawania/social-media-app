@@ -9,7 +9,7 @@ import { setTheme } from "../redux/theme";
 import { userlogout } from "../redux/userslice";
 
 function Topbar() {
-  const theme = useSelector((state) => state.theme);
+  const {theme} = useSelector((state) => state.theme);
   const state = useSelector((state) => state.user);
   const {
     register,

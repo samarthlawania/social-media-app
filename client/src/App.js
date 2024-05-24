@@ -8,6 +8,8 @@ import {
   Register,
   Resetpassword,
   Verifyemail,
+  Requestpassword,
+  ConfirmResetpassword,
 } from "./Component";
 
 function Layout() {
@@ -37,7 +39,15 @@ function App() {
         <Route path="/auth/register" element={<Register />} />
         <Route path="/auth/login" element={<Login />} />
         <Route path="/user/verify/:userId/:token" element={<Verifyemail />} />
-        <Route path="/reset-password" element={<Resetpassword />} />
+        <Route path="/request-password-reset" element={<Requestpassword />} />
+        <Route
+          path="/reset-password/:userId/:token"
+          element={<ConfirmResetpassword />}
+        />
+        <Route
+          path="/change-password/:userId/:token"
+          element={<Resetpassword />}
+        />
       </Routes>
     </div>
   );

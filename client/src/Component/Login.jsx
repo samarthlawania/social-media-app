@@ -124,7 +124,7 @@ function Login() {
             </div>
             <div className="flex justify-between mb-6">
               <Link
-                to="/reset-password"
+                to="/request-password-reset"
                 className="text-sm font-semibold text-lime-400 hover:text-blue-600 dark:text-lime-100"
               >
                 Forget password?

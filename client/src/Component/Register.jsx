@@ -186,7 +186,7 @@ function Register() {
               Forget password?
             </Link>
             <Link
-              to="/register"
+              to="/auth/register"
               className="text-sm font-semibold text-lime-200 hover:text-blue-700"
             >
               Create account

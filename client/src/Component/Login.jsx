@@ -130,7 +130,7 @@ function Login() {
                 Forget password?
               </Link>
               <Link
-                to="/register"
+                to="/auth/register"
                 className="text-sm font-semibold text-lime-400 hover:text-blue-700 dark:text-lime-100"
               >
                 Create account

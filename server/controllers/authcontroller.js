@@ -6,24 +6,26 @@ import VerificationToken from "../models/emailverification.js";
 //password-012345
 
 export const register = async (req, res, next) => {
-  console.log("hn bhai register krne hi aaya hun idhar");
+  console.log("Attempting to register a new user");
+
   const { firstname, lastname, email, password } = req.body;
 
-  //validate if all fields are filled
-  if (!(firstname || lastname || email || password)) {
-    next("Provide required fiels");
-    return;
+  // Validate if all required fields are filled
+  if (!(firstname && lastname && email && password)) {
+    return res.status(400).json({ message: "Provide all required fields" });
   }
 
   try {
-    const UserExist = await Users.findOne({ email });
-    if (UserExist) {
-      next("User already exist");
-      return;
-    }
-    //hash password
+    const userExist = await Users.findOne({ email });
+    console.log(userExist ? "User already exists" : "No existing user found");
 
+    if (userExist) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash the password
     const hashedPassword = await hashString(password);
+    console.log("Password hashed successfully");
 
     const user = await Users.create({
       firstname,
@@ -31,17 +33,11 @@ export const register = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-
-    // const user_token = await VerificationToken.findOne({ userId: user._id });
-
-    // console.log(user_token + "" + user._id);
+    console.log("User created successfully:", user);
 
     const { token } = await sendVerificationmail(user, res);
 
-    const user_token = await VerificationToken.findOne({ userId: user._id });
-
-    console.log(user_token + "" + user._id);
-
+    // Save the user
     await user.save();
     res.status(201).json({
       message: "User created successfully",
@@ -49,8 +45,8 @@ export const register = async (req, res, next) => {
       token,
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ essage: err.message });
+    console.error("Error during user registration:", err);
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -61,6 +57,7 @@ export const login = async (req, res, next) => {
       next("Provide required fiels");
       return;
     }
+    console.log(email);
     const user = await Users.findOne({ email }).select("+password").populate({
       path: "friends",
       select: "firstname lastname location profileURL -password",
